@@ -1,8 +1,8 @@
 # Image
-FROM node:6.11.0-alpine
+FROM node:6.11.1-alpine
 
 # Environment variables
-ENV WKHTMLTOPDF_VERSION=0.12.4
+ENV WKHTMLTOX_VERSION=0.12.4
 
 # Copy patches
 RUN mkdir -p /tmp/qt-patches
@@ -13,23 +13,19 @@ COPY conf/qt-font-pixel-size.patch /tmp/qt-patches/qt-font-pixel-size.patch
 
 # Install needed packages
 RUN apk add --no-cache \
-  glib \
   gtk+ \
-  openssl \
 && apk add --no-cache --virtual .build-deps \
   g++ \
   git \
-  glib-dev \
   gtk+-dev \
   make \
   mesa-dev \
-  openssl-dev \
   patch \
 
 # Download source files
 && git clone --recursive https://github.com/wkhtmltopdf/wkhtmltopdf.git /tmp/wkhtmltopdf \
 && cd /tmp/wkhtmltopdf \
-&& git checkout tags/$WKHTMLTOPDF_VERSION \
+&& git checkout tags/$WKHTMLTOX_VERSION \
 
 # Apply patches
 && cd /tmp/wkhtmltopdf/qt \
@@ -50,92 +46,102 @@ RUN apk add --no-cache \
   -sysconfdir /etc \
   -plugindir /usr/lib/qt/plugins \
   -importdir /usr/lib/qt/imports \
-  -fast \
+  -silent \
   -release \
   -static \
-  -largefile \
-  -glib \
-  -graphicssystem raster \
-  -qt-zlib \
-  -qt-libpng \
-  -qt-libmng \
-  -qt-libtiff \
-  -qt-libjpeg \
-  -svg \
+  -fast \
   -webkit \
-  -gtkstyle \
-  -xmlpatterns \
   -script \
-  -scripttools \
-  -openssl-linked \
-  -nomake demos \
-  -nomake docs \
-  -nomake examples \
-  -nomake tools \
-  -nomake tests \
-  -nomake translations \
-  -no-qt3support \
-  -no-pch \
-  -no-icu \
-  -no-phonon \
-  -no-phonon-backend \
-  -no-rpath \
-  -no-separate-debug-info \
-  -no-dbus \
-  -no-opengl \
-  -no-openvg \
+  -svg \
+  -exceptions \
+  -xmlpatterns \
+  -no-largefile \
   -no-accessibility \
   -no-stl \
-  -no-opengl \
-  -no-declarative \
   -no-sql-ibase \
   -no-sql-mysql \
   -no-sql-odbc \
   -no-sql-psql \
   -no-sql-sqlite \
   -no-sql-sqlite2 \
+  -no-qt3support \
+  -no-opengl \
+  -no-openvg \
+  -no-system-proxies \
+  -no-multimedia \
+  -no-audio-backend \
+  -no-phonon \
+  -no-phonon-backend \
+  -no-javascript-jit \
+  -no-scripttools \
+  -no-declarative \
+  -no-declarative-debug \
   -no-mmx \
   -no-3dnow \
   -no-sse \
   -no-sse2 \
-  -no-multimedia \
-  -no-nis \
-  -no-cups \
-  -no-nas-sound \
-  -no-sm \
-  -no-xshape \
-  -no-xcursor \
-  -no-xfixes \
-  -no-xrandr \
-  -no-mitshm \
-  -no-xinput \
-  -no-xkb \
-  -no-xsync \
-  -no-audio-backend \
   -no-sse3 \
   -no-ssse3 \
   -no-sse4.1 \
   -no-sse4.2 \
   -no-avx \
   -no-neon \
-  -exceptions \
-  -xrender \
+  -no-openssl \
+  -no-rpath \
+  -no-nis \
+  -no-cups \
+  -no-pch \
+  -no-dbus \
+  -no-separate-debug-info \
+  -no-gtkstyle \
+  -no-nas-sound \
+  -no-opengl \
+  -no-openvg \
+  -no-sm \
+  -no-xshape \
+  -no-xvideo \
+  -no-xsync \
+  -no-xinerama \
+  -no-xcursor \
+  -no-xfixes \
+  -no-xrandr \
+  -no-mitshm \
+  -no-xinput \
+  -no-xkb \
+  -no-glib \
+  -nomake demos \
+  -nomake docs \
+  -nomake examples \
+  -nomake tools \
+  -nomake tests \
+  -nomake translations \
+  -graphicssystem raster \
+  -qt-zlib \
+  -qt-libpng \
+  -qt-libmng \
+  -qt-libtiff \
+  -qt-libjpeg \
+  -optimized-qmake \
   -iconv \
+  -xrender \
+  -fontconfig \
   -D ENABLE_VIDEO=0 \
-&& make --silent \
-&& make check \
-&& make install \
-&& make clean \
-&& make distclean \
+&& make --jobs 20 --silent \
+&& make --jobs 20 install \
 
 # Install wkhtmltopdf
 && cd /tmp/wkhtmltopdf \
 && qmake \
-&& make --silent \
-&& make check \
-&& make install \
-&& make clean \
-&& make distclean \
+&& make --jobs 20 --silent \
+&& make --jobs 20 install \
+&& make --jobs 20 clean \
+&& make --jobs 20 distclean \
+
+# Uninstall qt
+&& cd /tmp/wkhtmltopdf/qt \
+&& make --jobs 20 uninstall \
+&& make --jobs 20 clean \
+&& make --jobs 20 distclean \
 
 # Clean up when done
 && rm -rf /tmp/* \

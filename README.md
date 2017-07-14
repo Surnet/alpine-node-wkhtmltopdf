@@ -20,7 +20,7 @@ FROM alpine-node-wkhtmltopdf:latest
 
 Please feel free to open a issue or pull request with suggestions.
 
-Keep in mind that the build process of this container takes some time.
+Keep in mind that the build process of this container takes some (a lot of) time.
 
 ## Credits
 
