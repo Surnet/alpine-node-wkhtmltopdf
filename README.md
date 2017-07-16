@@ -13,7 +13,7 @@ This Docker image contains a working wkhtmltopdf and NodeJS installation. The pu
 This image can be used as a base for your project. For best results use a fixed version and not latest.
 
 ```yaml
-FROM alpine-node-wkhtmltopdf:latest
+FROM surnet/alpine-node-wkhtmltopdf:latest
 ```
 
 ## Contribute
