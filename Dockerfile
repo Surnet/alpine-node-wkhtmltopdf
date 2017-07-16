@@ -5,11 +5,8 @@ FROM node:6.11.1-alpine
 ENV WKHTMLTOX_VERSION=0.12.4
 
 # Copy patches
-RUN mkdir -p /tmp/qt-patches
-COPY conf/qt-musl.patch /tmp/qt-patches/qt-musl.patch
-COPY conf/qt-musl-iconv-no-bom.patch /tmp/qt-patches/qt-musl-iconv-no-bom.patch
-COPY conf/qt-recursive-global-mutex.patch /tmp/qt-patches/qt-recursive-global-mutex.patch
-COPY conf/qt-font-pixel-size.patch /tmp/qt-patches/qt-font-pixel-size.patch
+RUN mkdir -p /tmp/patches
+COPY conf/* /tmp/patches/
 
 # Install needed packages
 RUN apk add --no-cache \
@@ -28,16 +25,20 @@ RUN apk add --no-cache \
 && git checkout tags/$WKHTMLTOX_VERSION \
 
 # Apply patches
+&& patch -i /tmp/patches/wkhtmltopdf-buildconfig.patch \
 && cd /tmp/wkhtmltopdf/qt \
-&& patch -p1 -i /tmp/qt-patches/qt-musl.patch \
-&& patch -p1 -i /tmp/qt-patches/qt-musl-iconv-no-bom.patch \
-&& patch -p1 -i /tmp/qt-patches/qt-recursive-global-mutex.patch \
-&& patch -p1 -i /tmp/qt-patches/qt-font-pixel-size.patch \
+&& patch -p1 -i /tmp/patches/qt-musl.patch \
+&& patch -p1 -i /tmp/patches/qt-musl-iconv-no-bom.patch \
+&& patch -p1 -i /tmp/patches/qt-recursive-global-mutex.patch \
+&& patch -p1 -i /tmp/patches/qt-font-pixel-size.patch \
 
 # Modify qmake config
 && sed -i "s|-O2|$CXXFLAGS|" mkspecs/common/g++.conf \
 && sed -i "/^QMAKE_RPATH/s| -Wl,-rpath,||g" mkspecs/common/g++.conf \
 && sed -i "/^QMAKE_LFLAGS\s/s|+=|+= $LDFLAGS|g" mkspecs/common/g++.conf \
+
+# Prepare optimal build settings
+&& NB_CORES=$(grep -c '^processor' /proc/cpuinfo) \
 
 # Install qt
 && ./configure -confirm-license -opensource \
@@ -126,22 +127,22 @@ RUN apk add --no-cache \
   -xrender \
   -fontconfig \
   -D ENABLE_VIDEO=0 \
-&& make --jobs 20 --silent \
-&& make --jobs 20 install \
+&& make --jobs $(($NB_CORES*2)) --silent \
+&& make install \
 
 # Install wkhtmltopdf
 && cd /tmp/wkhtmltopdf \
 && qmake \
-&& make --jobs 20 --silent \
-&& make --jobs 20 install \
-&& make --jobs 20 clean \
-&& make --jobs 20 distclean \
+&& make --jobs $(($NB_CORES*2)) --silent \
+&& make install \
+&& make clean \
+&& make distclean \
 
 # Uninstall qt
 && cd /tmp/wkhtmltopdf/qt \
-&& make --jobs 20 uninstall \
-&& make --jobs 20 clean \
-&& make --jobs 20 distclean \
+&& make uninstall \
+&& make clean \
+&& make distclean \
 
 # Clean up when done
 && rm -rf /tmp/* \

@@ -1,6 +1,6 @@
 # alpine-node-wkhtmltopdf
 
-This Docker image contains a working wkhtmltopdf, wkhtmltoimage and NodeJS installation. The purpose is to keep it as small as possible while delivering all functions.
+This Docker image contains a working wkhtmltopdf and NodeJS installation. The purpose is to keep it as small as possible while delivering all functions.
 
 [![Docker Stars](https://img.shields.io/docker/stars/surnet/alpine-node-wkhtmltopdf.svg)](https://hub.docker.com/r/surnet/alpine-node-wkhtmltopdf/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/surnet/alpine-node-wkhtmltopdf.svg)](https://hub.docker.com/r/surnet/alpine-node-wkhtmltopdf/)
