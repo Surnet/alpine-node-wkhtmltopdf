@@ -11,12 +11,14 @@ COPY conf/* /tmp/patches/
 # Install needed packages
 RUN apk add --no-cache \
   gtk+ \
+  openssl \
 && apk add --no-cache --virtual .build-deps \
   g++ \
   git \
   gtk+-dev \
   make \
   mesa-dev \
+  openssl-dev \
   patch \
 
 # Download source files
@@ -56,6 +58,7 @@ RUN apk add --no-cache \
   -svg \
   -exceptions \
   -xmlpatterns \
+  -openssl-linked \
   -no-largefile \
   -no-accessibility \
   -no-stl \
@@ -87,7 +90,6 @@ RUN apk add --no-cache \
   -no-sse4.2 \
   -no-avx \
   -no-neon \
-  -no-openssl \
   -no-rpath \
   -no-nis \
   -no-cups \
