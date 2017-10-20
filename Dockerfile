@@ -12,6 +12,7 @@ COPY conf/* /tmp/patches/
 RUN apk add --no-cache \
   gtk+ \
   openssl \
+  font-adobe-100dpi \
 && apk add --no-cache --virtual .build-deps \
   g++ \
   git \
