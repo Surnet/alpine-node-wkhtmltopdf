@@ -1,5 +1,5 @@
 # Image
-FROM node:6.11.1-alpine
+FROM node:6.11.4-alpine
 
 # Environment variables
 ENV WKHTMLTOX_VERSION=0.12.4
