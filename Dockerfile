@@ -12,7 +12,14 @@ COPY conf/* /tmp/patches/
 RUN apk add --no-cache \
   gtk+ \
   openssl \
-  font-adobe-100dpi \
+  fontconfig \
+  freetype \
+  ttf-dejavu \
+  ttf-droid \
+  ttf-freefont \
+  ttf-liberation \
+  ttf-linux-libertine \
+  ttf-ubuntu-font-family \
 && apk add --no-cache --virtual .build-deps \
   g++ \
   git \
@@ -53,13 +60,13 @@ RUN apk add --no-cache \
   -silent \
   -release \
   -static \
-  -fast \
   -webkit \
   -script \
   -svg \
   -exceptions \
   -xmlpatterns \
   -openssl-linked \
+  -no-fast \
   -no-largefile \
   -no-accessibility \
   -no-stl \
@@ -150,3 +157,4 @@ RUN apk add --no-cache \
 # Clean up when done
 && rm -rf /tmp/* \
 && apk del .build-deps
+
