@@ -1,5 +1,5 @@
 # Image
-FROM node:6.11.1-alpine
+FROM node:6.11.4-alpine
 
 # Environment variables
 ENV WKHTMLTOX_VERSION=0.12.4
@@ -10,19 +10,22 @@ COPY conf/* /tmp/patches/
 
 # Install needed packages
 RUN apk add --no-cache \
-  gtk+ \
-  openssl \
+  libstdc++ \
+  libx11 \
+  libxrender \
+  libxext \
+  ca-certificates \
   fontconfig \
   freetype \
   ttf-dejavu \
   ttf-droid \
   ttf-freefont \
   ttf-liberation \
-  ttf-linux-libertine \
   ttf-ubuntu-font-family \
 && apk add --no-cache --virtual .build-deps \
   g++ \
   git \
+  gtk+ \
   gtk+-dev \
   make \
   mesa-dev \
