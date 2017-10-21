@@ -10,19 +10,22 @@ COPY conf/* /tmp/patches/
 
 # Install needed packages
 RUN apk add --no-cache \
-  gtk+ \
-  openssl \
+  libstdc++ \
+  libx11 \
+  libxrender \
+  libxext \
+  ca-certificates \
   fontconfig \
   freetype \
   ttf-dejavu \
   ttf-droid \
   ttf-freefont \
   ttf-liberation \
-  ttf-linux-libertine \
   ttf-ubuntu-font-family \
 && apk add --no-cache --virtual .build-deps \
   g++ \
   git \
+  gtk+ \
   gtk+-dev \
   make \
   mesa-dev \
