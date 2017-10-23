@@ -123,6 +123,7 @@ RUN apk add --no-cache \
   -no-xinput \
   -no-xkb \
   -no-glib \
+  -no-icu \
   -nomake demos \
   -nomake docs \
   -nomake examples \
