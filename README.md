@@ -25,3 +25,4 @@ Based upon the following repos/inputs:
 - https://github.com/nodejs/docker-node
 - https://github.com/alloylab/Docker-Alpine-wkhtmltopdf
 - https://github.com/wkhtmltopdf/wkhtmltopdf/issues/1794
+- https://github.com/aantonw/docker-alpine-wkhtmltopdf-patched-qt

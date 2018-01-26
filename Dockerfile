@@ -1,5 +1,5 @@
 # Image
-FROM node:6.11.4-alpine
+FROM node:8.9.4-alpine
 
 # Environment variables
 ENV WKHTMLTOX_VERSION=0.12.4
@@ -31,12 +31,12 @@ RUN apk add --no-cache \
   mesa-dev \
   openssl-dev \
   patch \
-
+\
 # Download source files
 && git clone --recursive https://github.com/wkhtmltopdf/wkhtmltopdf.git /tmp/wkhtmltopdf \
 && cd /tmp/wkhtmltopdf \
 && git checkout tags/$WKHTMLTOX_VERSION \
-
+\
 # Apply patches
 && patch -i /tmp/patches/wkhtmltopdf-buildconfig.patch \
 && cd /tmp/wkhtmltopdf/qt \
@@ -44,15 +44,16 @@ RUN apk add --no-cache \
 && patch -p1 -i /tmp/patches/qt-musl-iconv-no-bom.patch \
 && patch -p1 -i /tmp/patches/qt-recursive-global-mutex.patch \
 && patch -p1 -i /tmp/patches/qt-font-pixel-size.patch \
-
+&& patch -p1 -i /tmp/patches/qt-gcc6.patch \
+\
 # Modify qmake config
 && sed -i "s|-O2|$CXXFLAGS|" mkspecs/common/g++.conf \
 && sed -i "/^QMAKE_RPATH/s| -Wl,-rpath,||g" mkspecs/common/g++.conf \
 && sed -i "/^QMAKE_LFLAGS\s/s|+=|+= $LDFLAGS|g" mkspecs/common/g++.conf \
-
+\
 # Prepare optimal build settings
 && NB_CORES=$(grep -c '^processor' /proc/cpuinfo) \
-
+\
 # Install qt
 && ./configure -confirm-license -opensource \
   -prefix /usr \
@@ -143,7 +144,7 @@ RUN apk add --no-cache \
   -D ENABLE_VIDEO=0 \
 && make --jobs $(($NB_CORES*2)) --silent \
 && make install \
-
+\
 # Install wkhtmltopdf
 && cd /tmp/wkhtmltopdf \
 && qmake \
@@ -151,14 +152,13 @@ RUN apk add --no-cache \
 && make install \
 && make clean \
 && make distclean \
-
+\
 # Uninstall qt
 && cd /tmp/wkhtmltopdf/qt \
 && make uninstall \
 && make clean \
 && make distclean \
-
+\
 # Clean up when done
 && rm -rf /tmp/* \
 && apk del .build-deps
-
